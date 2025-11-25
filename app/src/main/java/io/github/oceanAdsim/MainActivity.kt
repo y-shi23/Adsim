@@ -7,13 +7,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import io.github.oceanAdsim.ad.AdSimulator
+import io.github.oceanAdsim.ad.CenterAdManager
 import io.github.oceanAdsim.ui.navigation.BottomNavigationBar
-import io.github.oceanAdsim.ui.navigation.NavigationObserver
 import io.github.oceanAdsim.ui.theme.AdsimTheme
+import io.github.oceanAdsim.ui.navigation.NavDestinations
+import io.github.oceanAdsim.ui.ad.SplashAdScreen
 import java.util.Random
 
 class MainActivity : ComponentActivity() {
@@ -22,28 +24,46 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
-        // 设置当前活动到广告模拟器
-        AdSimulator.setCurrentActivity(this)
-        
+
         setContent {
             AdsimTheme {
-                SetupNavHost()
+                SplashAdWrapper()
             }
         }
-        
-        // 应用启动后随机延迟显示广告（3-8秒）
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (random.nextBoolean()) {
-                AdSimulator.showAdPopup()
-            }
-        }, 3000 + random.nextInt(5000).toLong())
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // 停止自动广告
         AdSimulator.stopAutoAd()
+        CenterAdManager.stopCenterAutoAd()
+        CenterAdManager.cleanup()
+    }
+}
+
+
+@Composable
+fun SplashAdWrapper() {
+    // 控制是否显示开屏广告
+    var showSplashAd by remember { mutableStateOf(true) }
+    var showMainContent by remember { mutableStateOf(false) }
+
+    if (showSplashAd) {
+        // 显示开屏广告
+        SplashAdScreen(
+            onSkip = {
+                showSplashAd = false
+                showMainContent = true
+            },
+            onAdClick = {
+                // 点击开屏广告，直接进入主界面
+                showSplashAd = false
+                showMainContent = true
+            }
+        )
+    } else if (showMainContent) {
+        // 显示主应用内容
+        SetupNavHost()
     }
 }
 
@@ -51,17 +71,25 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SetupNavHost() {
     val navController = rememberNavController()
-    
-    // 添加导航观察者，在页面切换时可能显示广告
-    androidx.compose.runtime.DisposableEffect(navController) {
-        val observer = NavigationObserver()
-        navController.addOnDestinationChangedListener(observer)
-        
-        onDispose {
-            navController.removeOnDestinationChangedListener(observer)
-        }
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    // 初始化广告管理器
+    LaunchedEffect(navController) {
+        CenterAdManager.initialize(
+            activity = context as ComponentActivity,
+            controller = navController
+        )
+        // 设置AdSimulator的导航控制器
+        AdSimulator.setCurrentActivity(context as ComponentActivity, navController)
     }
-    
+
+    // 应用启动后1秒显示中间大广告
+    LaunchedEffect(Unit) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            CenterAdManager.showCenterAd()
+        }, 1000)
+    }
+
     BottomNavigationBar(navController = navController)
 }
 

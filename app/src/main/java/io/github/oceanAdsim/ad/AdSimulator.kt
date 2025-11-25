@@ -14,10 +14,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.navigation.NavController
+import io.github.oceanAdsim.ui.navigation.NavDestinations
 import java.util.Random
 
 object AdSimulator {
     private var currentActivity: Activity? = null
+    private var navController: NavController? = null
     private val handler = Handler(Looper.getMainLooper())
     private val random = Random()
     private var isAdShowing = false
@@ -32,9 +35,10 @@ object AdSimulator {
         AdTemplate("直播预告", "今晚8点直播，精彩不容错过", "预约直播", 4500)
     )
 
-    // 设置当前活动
-    fun setCurrentActivity(activity: Activity) {
+    // 设置当前活动和导航控制器
+    fun setCurrentActivity(activity: Activity, controller: NavController? = null) {
         currentActivity = activity
+        navController = controller
         // 启动自动广告
         startAutoAd()
     }
@@ -138,6 +142,18 @@ object AdSimulator {
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
+        actionButton.setOnClickListener {
+            // 关闭当前广告
+            isAdShowing = false
+            try {
+                val parent = container.parent as? ViewGroup
+                parent?.removeView(container)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            // 跳转到广告落地页
+            navController?.navigate(NavDestinations.AD_LANDING)
+        }
         buttonContainer.addView(actionButton)
         
         container.addView(buttonContainer)
@@ -150,11 +166,12 @@ object AdSimulator {
         
         autoAdRunnable = object : Runnable {
             override fun run() {
-                if (random.nextBoolean() && currentActivity != null) {
+                // 降低显示概率：20%概率显示底部广告
+                if (random.nextInt(100) < 20 && currentActivity != null) {
                     showAdPopup()
                 }
-                // 随机延迟再次显示广告（10-30秒）
-                handler.postDelayed(this, 10000 + random.nextInt(20000).toLong())
+                // 增加显示间隔：20-60秒
+                handler.postDelayed(this, 20000 + random.nextInt(40000).toLong())
             }
         }
         
