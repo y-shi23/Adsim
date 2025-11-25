@@ -8,6 +8,7 @@ import io.github.oceanAdsim.ui.home.HomeScreen
 import io.github.oceanAdsim.ui.message.MessageScreen
 import io.github.oceanAdsim.ui.profile.ProfileScreen
 import io.github.oceanAdsim.ui.ad.AdLandingScreen
+import io.github.oceanAdsim.ui.settings.SettingsScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -16,13 +17,16 @@ fun NavGraph(navController: NavHostController) {
             HomeScreen()
         }
         composable(NavDestinations.MESSAGE) {
-            MessageScreen()
+            MessageScreen(navController)
         }
         composable(NavDestinations.PROFILE) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
         composable(NavDestinations.AD_LANDING) {
             AdLandingScreen(navController)
+        }
+        composable(NavDestinations.SETTINGS) {
+            SettingsScreen(navController)
         }
     }
 }

@@ -5,4 +5,5 @@ object NavDestinations {
     const val MESSAGE = "message"
     const val PROFILE = "profile"
     const val AD_LANDING = "ad_landing"
+    const val SETTINGS = "settings"
 }
