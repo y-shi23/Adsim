@@ -18,6 +18,8 @@ import io.github.oceanAdsim.ui.ad.CenterAdScreen
 fun CenterAdOverlay(
     modifier: Modifier = Modifier
 ) {
+    // 强制状态更新，确保UI能及时响应广告状态变化
+    var forceUpdate by remember { mutableStateOf(0) }
     // 本地状态用于跟踪中间广告
     var currentAdState by remember { mutableStateOf<CenterAdManager.CenterAdState?>(null) }
 
@@ -27,6 +29,8 @@ fun CenterAdOverlay(
         CenterAdManager.setStateUpdateCallback {
             // 当CenterAdManager状态更新时，同步本地状态
             currentAdState = CenterAdManager.currentAdState
+            // 触发强制更新
+            forceUpdate++ // 强制触发重组
         }
 
         // 初始同步状态

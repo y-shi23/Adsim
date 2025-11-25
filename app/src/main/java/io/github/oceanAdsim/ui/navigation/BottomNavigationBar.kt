@@ -16,9 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,11 +27,26 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.oceanAdsim.R
 import androidx.compose.ui.graphics.Color
+import io.github.oceanAdsim.ad.CenterAdManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    // 广告状态，定期检查更新
+    var isAdShowing by remember { mutableStateOf(CenterAdManager.isShowingCenterAd()) }
+
+    // 定期检查广告状态变化（每500ms检查一次）
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(500)
+            val newAdState = CenterAdManager.isShowingCenterAd()
+            if (newAdState != isAdShowing) {
+                isAdShowing = newAdState
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -58,28 +73,32 @@ fun BottomNavigationBar(navController: NavHostController) {
                         },
                         label = { Text(item.label) },
                         selected = currentDestination?.route == item.route,
+                        enabled = !isAdShowing, // 当广告显示时禁用导航项
                         onClick = {
-                            navController.navigate(item.route) {
-                                // 避免重复导航到相同的目的地
-                                launchSingleTop = true
-                                // 清除导航栈，返回到顶层
-                                popUpTo(NavDestinations.HOME) {
-                                    saveState = true
+                            // 检查是否有中间广告正在显示，如果有则禁止导航
+                            if (!isAdShowing) {
+                                navController.navigate(item.route) {
+                                    // 避免重复导航到相同的目的地
+                                    launchSingleTop = true
+                                    // 清除导航栈，返回到顶层
+                                    popUpTo(NavDestinations.HOME) {
+                                        saveState = true
+                                    }
+                                    // 恢复保存的状态
+                                    restoreState = true
                                 }
-                                // 恢复保存的状态
-                                restoreState = true
                             }
-                        },
+                        }
                     )
                 }
             }
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(it)
+                    .padding(paddingValues)
             ) {
                 NavGraph(navController)
             }

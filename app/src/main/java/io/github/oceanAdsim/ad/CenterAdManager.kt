@@ -38,6 +38,11 @@ object CenterAdManager {
         stateUpdateCallback = callback
     }
 
+    // 检查是否有中间广告正在显示
+    fun isShowingCenterAd(): Boolean {
+        return isCenterAdShowing && currentAdState?.isVisible == true
+    }
+
     // 初始化
     fun initialize(activity: Activity, controller: NavController) {
         android.util.Log.d("CenterAdManager", "初始化开始")
