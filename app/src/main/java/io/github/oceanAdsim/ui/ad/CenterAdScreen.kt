@@ -46,9 +46,7 @@ fun CenterAdScreen(
 
     Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.8f))
-            .clickable { /* 点击背景不关闭，只阻止穿透 */ },
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         // 广告容器 - 直接使用Column，移除Card外框
