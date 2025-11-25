@@ -28,9 +28,9 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "欢迎使用广告模拟器", fontSize = 24.sp)
+            Text(text = "欢迎使用Adsim", fontSize = 24.sp)
             Text(
-                text = "此应用用于测试AI智能体关闭弹窗广告的能力\n底部广告和中间广告都会随机出现",
+                text = "此应用用于测试弹窗广告的能力\n底部广告和中间广告都会随机出现",
                 modifier = Modifier.padding(vertical = 16.dp)
             )
             Button(

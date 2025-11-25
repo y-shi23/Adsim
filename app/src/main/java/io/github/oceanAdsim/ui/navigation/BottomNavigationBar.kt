@@ -52,7 +52,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text("广告模拟器") },
+                title = { Text("Adsim") },
                 scrollBehavior = scrollBehavior,
             )
         },
