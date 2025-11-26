@@ -6,8 +6,11 @@ import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import io.github.oceanAdsim.ad.AdSimulator
@@ -16,6 +19,8 @@ import io.github.oceanAdsim.ui.navigation.BottomNavigationBar
 import io.github.oceanAdsim.ui.theme.AdsimTheme
 import io.github.oceanAdsim.ui.navigation.NavDestinations
 import io.github.oceanAdsim.ui.ad.SplashAdScreen
+import io.github.oceanAdsim.data.SettingsManager
+import io.github.oceanAdsim.ui.components.CenterAdOverlay
 import java.util.Random
 
 class MainActivity : ComponentActivity() {
@@ -24,6 +29,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // 初始化设置管理器
+        SettingsManager.init(applicationContext)
 
         setContent {
             AdsimTheme {
@@ -90,7 +98,10 @@ fun SetupNavHost() {
         }, 1000)
     }
 
-    BottomNavigationBar(navController = navController)
+    Box(modifier = Modifier.fillMaxSize()) {
+        BottomNavigationBar(navController = navController)
+        CenterAdOverlay()
+    }
 }
 
 @Preview(showBackground = true)

@@ -18,9 +18,13 @@ import androidx.compose.ui.platform.LocalContext
 import io.github.oceanAdsim.ui.components.CenterAdOverlay
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import io.github.oceanAdsim.data.SettingsManager
 
 @Composable
 fun SettingsScreen(navController: NavController? = null) {
+    var showBottomAd by remember { mutableStateOf(SettingsManager.showBottomAd) }
+    var centerAdOnce by remember { mutableStateOf(SettingsManager.centerAdOnce) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -62,17 +66,26 @@ fun SettingsScreen(navController: NavController? = null) {
 
             // 设置选项列表
             SettingSection(title = "广告设置") {
-                SettingItem(
-                    title = "自动显示广告",
-                    subtitle = "开启后应用会自动显示各种广告"
+                SwitchSettingItem(
+                    title = "底部广告",
+                    subtitle = "开启/关闭底部横幅广告",
+                    checked = showBottomAd,
+                    onCheckedChange = {
+                        showBottomAd = it
+                        SettingsManager.showBottomAd = it
+                    }
                 )
-                SettingItem(
-                    title = "广告频率",
-                    subtitle = "调整广告显示的频率"
-                )
-                SettingItem(
-                    title = "广告类型",
-                    subtitle = "选择要显示的广告类型"
+                SwitchSettingItem(
+                    title = "中间大广告仅显示一次",
+                    subtitle = "开启后，中间弹窗广告在应用生命周期内仅显示一次",
+                    checked = centerAdOnce,
+                    onCheckedChange = {
+                        centerAdOnce = it
+                        SettingsManager.centerAdOnce = it
+                        // 如果开启了"仅显示一次"，且已经显示过，可能需要重置计数？
+                        // 用户需求是"若关闭底部广告则永远不显示底部广告；再添加一个开关控制中间大广告的行为——仅显示一次中间弹窗打广告"
+                        // 这里不需要重置，只是改变行为。
+                    }
                 )
             }
 
@@ -106,9 +119,6 @@ fun SettingsScreen(navController: NavController? = null) {
                 )
             }
         }
-
-        // 中间广告叠加层
-        CenterAdOverlay()
     }
 }
 
@@ -194,6 +204,47 @@ private fun SettingItem(
     }
 
     // 分割线（除了最后一项）
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(1.dp),
+        color = Color.LightGray
+    )
+}
+
+@Composable
+private fun SwitchSettingItem(
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = subtitle,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
+    }
     Divider(
         modifier = Modifier
             .fillMaxWidth()

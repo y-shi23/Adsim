@@ -52,8 +52,5 @@ fun HomeScreen() {
                 Text("手动显示中间广告")
             }
         }
-
-        // 中间广告叠加层
-        CenterAdOverlay()
     }
 }

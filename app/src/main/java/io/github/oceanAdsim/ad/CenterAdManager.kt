@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import io.github.oceanAdsim.ui.navigation.NavDestinations
+import io.github.oceanAdsim.data.SettingsManager
 import java.util.Random
 
 object CenterAdManager {
@@ -54,6 +55,12 @@ object CenterAdManager {
 
     // 显示中间大广告
     fun showCenterAd() {
+        // 检查设置：如果开启了"仅显示一次"，且已经显示过，则不再显示
+        if (SettingsManager.centerAdOnce && SettingsManager.centerAdShownCount > 0) {
+            android.util.Log.d("CenterAdManager", "广告显示被阻止: 设置为仅显示一次且已显示过")
+            return
+        }
+
         if (isCenterAdShowing || currentActivity == null) {
             android.util.Log.d("CenterAdManager", "广告显示被阻止: isShowing=$isCenterAdShowing, activity=${currentActivity != null}")
             return
@@ -61,6 +68,10 @@ object CenterAdManager {
 
         android.util.Log.d("CenterAdManager", "开始显示中间广告")
         isCenterAdShowing = true
+        
+        // 增加显示计数
+        SettingsManager.incrementCenterAdShownCount()
+
         val adImageName = adImageNames[random.nextInt(adImageNames.size)]
 
         currentAdState = CenterAdState(

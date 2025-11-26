@@ -64,39 +64,45 @@ fun SplashAdScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.TopCenter),
-            contentAlignment = Alignment.TopEnd
+                .padding(top = 40.dp, end = 20.dp) // 增加顶部边距以避开状态栏，调整右侧边距
+                .align(Alignment.TopEnd), // 对齐到右上角
+            contentAlignment = Alignment.CenterEnd
         ) {
-            // 跳过按钮
-            Button(
+            // 现代化跳过按钮
+            Surface(
                 onClick = onSkip,
                 enabled = isSkipEnabled,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(
-                        if (isSkipEnabled)
-                            Color.White.copy(alpha = 0.9f)
-                        else
-                            Color.Gray.copy(alpha = 0.7f)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = if (isSkipEnabled) Color.Black else Color.White
-                )
+                shape = RoundedCornerShape(50), // 完全圆角
+                color = Color.Black.copy(alpha = 0.4f), // 半透明黑色背景
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)), // 细微边框
+                modifier = Modifier.wrapContentSize()
             ) {
-                if (isSkipEnabled) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (!isSkipEnabled) {
+                        Text(
+                            text = "${countdown}s",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(12.dp)
+                                .background(Color.White.copy(alpha = 0.5f))
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    
                     Text(
                         text = "跳过",
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                } else {
-                    Text(
-                        text = "$countdown",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = Color.White
                     )
                 }

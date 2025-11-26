@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import io.github.oceanAdsim.ui.components.CenterAdOverlay
 
 @Composable
 fun MessageScreen(navController: NavController) {
@@ -30,8 +29,5 @@ fun MessageScreen(navController: NavController) {
                 modifier = Modifier.padding(vertical = 16.dp)
             )
         }
-
-        // 中间广告叠加层
-        CenterAdOverlay()
     }
 }

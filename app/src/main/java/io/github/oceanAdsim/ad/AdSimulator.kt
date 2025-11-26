@@ -16,6 +16,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.navigation.NavController
 import io.github.oceanAdsim.ui.navigation.NavDestinations
+import io.github.oceanAdsim.data.SettingsManager
 import java.util.Random
 
 object AdSimulator {
@@ -45,6 +46,11 @@ object AdSimulator {
 
     // 手动显示广告弹窗
     fun showAdPopup() {
+        // 检查设置，如果关闭了底部广告则不显示
+        if (!SettingsManager.showBottomAd) {
+            return
+        }
+
         if (isAdShowing || currentActivity == null) return
         
         isAdShowing = true

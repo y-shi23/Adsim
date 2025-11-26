@@ -79,9 +79,6 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
         }
-
-        // 中间广告叠加层
-        CenterAdOverlay()
     }
 }
 
