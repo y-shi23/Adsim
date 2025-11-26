@@ -65,10 +65,10 @@ fun SettingsScreen(navController: NavController? = null) {
             }
 
             // 设置选项列表
-            SettingSection(title = "广告设置") {
+            SettingSection(title = "显示设置") {
                 SwitchSettingItem(
-                    title = "底部广告",
-                    subtitle = "开启/关闭底部横幅广告",
+                    title = "底部横幅",
+                    subtitle = "开启/关闭底部信息横幅",
                     checked = showBottomAd,
                     onCheckedChange = {
                         showBottomAd = it
@@ -76,15 +76,12 @@ fun SettingsScreen(navController: NavController? = null) {
                     }
                 )
                 SwitchSettingItem(
-                    title = "中间大广告仅显示一次",
-                    subtitle = "开启后，中间弹窗广告在应用生命周期内仅显示一次",
+                    title = "弹窗通知频次",
+                    subtitle = "开启后，重要通知在应用生命周期内仅显示一次",
                     checked = centerAdOnce,
                     onCheckedChange = {
                         centerAdOnce = it
                         SettingsManager.centerAdOnce = it
-                        // 如果开启了"仅显示一次"，且已经显示过，可能需要重置计数？
-                        // 用户需求是"若关闭底部广告则永远不显示底部广告；再添加一个开关控制中间大广告的行为——仅显示一次中间弹窗打广告"
-                        // 这里不需要重置，只是改变行为。
                     }
                 )
             }
@@ -110,8 +107,8 @@ fun SettingsScreen(navController: NavController? = null) {
 
             SettingSection(title = "测试设置") {
                 SettingItem(
-                    title = "清除所有广告",
-                    subtitle = "立即清除当前显示的所有广告"
+                    title = "清除缓存",
+                    subtitle = "清除应用临时数据"
                 )
                 SettingItem(
                     title = "重置设置",
