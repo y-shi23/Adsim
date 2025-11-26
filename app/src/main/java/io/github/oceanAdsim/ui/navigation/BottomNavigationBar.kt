@@ -52,7 +52,17 @@ fun BottomNavigationBar(navController: NavHostController) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = { Text("Adsim") },
+                title = { 
+                    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                    val title = when (currentRoute) {
+                        NavDestinations.HOME -> "首页"
+                        NavDestinations.MESSAGE -> "消息"
+                        NavDestinations.PROFILE -> "我的"
+                        NavDestinations.SETTINGS -> "设置"
+                        else -> "Adsim"
+                    }
+                    Text(title)
+                },
                 scrollBehavior = scrollBehavior,
             )
         },

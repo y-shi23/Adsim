@@ -23,12 +23,12 @@ object SettingsManager {
         get() = prefs.getBoolean(KEY_CENTER_AD_ONCE, false)
         set(value) = prefs.edit().putBoolean(KEY_CENTER_AD_ONCE, value).apply()
 
-    var centerAdShownCount: Int
-        get() = prefs.getInt(KEY_CENTER_AD_SHOWN_COUNT, 0)
-        set(value) = prefs.edit().putInt(KEY_CENTER_AD_SHOWN_COUNT, value).apply()
+    // 修改为内存变量，不进行持久化存储
+    // 这样每次APP重新启动（进程重建）时，计数器都会重置为0
+    var centerAdShownCount: Int = 0
 
     fun incrementCenterAdShownCount() {
-        centerAdShownCount = centerAdShownCount + 1
+        centerAdShownCount++
     }
     
     fun resetCenterAdShownCount() {
