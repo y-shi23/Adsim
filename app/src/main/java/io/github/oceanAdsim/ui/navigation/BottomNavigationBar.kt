@@ -80,11 +80,15 @@ fun BottomNavigationBar(navController: NavHostController) {
                                 navController.navigate(item.route) {
                                     // 避免重复导航到相同的目的地
                                     launchSingleTop = true
-                                    // 清除导航栈，返回到顶层
-                                    popUpTo(NavDestinations.HOME) {
-                                        saveState = true
+                                    // 当切换到不同的主页面时，清除到该主页面的导航栈
+                                    // 这样可以确保每个主页面都是干净的开始状态
+                                    if (currentDestination?.route != item.route) {
+                                        popUpTo(item.route) {
+                                            inclusive = true
+                                            saveState = false
+                                        }
                                     }
-                                    // 恢复保存的状态
+                                    // 恢复保存的状态（如果存在）
                                     restoreState = true
                                 }
                             }
